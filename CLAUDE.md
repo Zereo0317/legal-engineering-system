@@ -20,6 +20,13 @@ plugins (`cross-border-wealth`, `legal-pathways`) and a `westlaw-mcp` server. Se
 - The existing `cross-border-wealth/CLAUDE.md` and `legal-pathways/CLAUDE.md` are practice-profile
   **templates** (copied to the user's config on first run), not project context — leave them as-is.
 
+## Repository & development
+
+- **Repo:** [`Zereo0317/legal-engineering-system`](https://github.com/Zereo0317/legal-engineering-system) (**private**). Clone: `git clone https://github.com/Zereo0317/legal-engineering-system.git`.
+- **Shape:** a Claude Code **marketplace** (`.claude-plugin/marketplace.json`, `legal-engineering`) of two plugins — `cross-border-wealth` and `legal-pathways` — plus a bundled `westlaw-mcp` server (`pip install -r westlaw-mcp/requirements.txt`).
+- **Maintenance (intentionally shallow):** this is the **public upstream**; the maintained copy lives in `Skill/Zereo-skills/legal-engineering`. Don't deep-document internals here, and leave the per-plugin template `CLAUDE.md` files (`cross-border-wealth/`, `legal-pathways/`) as-is.
+- **`.gitignore`** excludes secrets, Python caches (`__pycache__/`, `.venv/`), and build artifacts.
+
 ## Relevant skills
 When working here, reach for these skills in ../../Skill/Zereo-skills (search registry.json):
 - legal-engineering — the maintained, integrated legal skill category (start here).
