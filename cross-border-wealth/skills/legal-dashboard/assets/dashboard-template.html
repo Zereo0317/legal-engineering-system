@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline'; style-src 'unsafe-inline'">
+  <title>Legal Dashboard</title>
+  <style>
+    /* === Reset & Base === */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-primary: #0f1117;
+      --bg-secondary: #1a1d27;
+      --bg-card: #222639;
+      --bg-hover: #2a2f45;
+      --bg-sidebar: #161824;
+      --text-primary: #e8eaf0;
+      --text-secondary: #9ca3b8;
+      --text-muted: #6b7394;
+      --border: #2e3450;
+      --accent: #6c8cff;
+      --accent-dim: #4a5fa0;
+      --risk-critical: #ff4d6a;
+      --risk-high: #ff8c42;
+      --risk-medium: #ffd166;
+      --risk-low: #06d6a0;
+      --status-active: #06d6a0;
+      --status-pending: #ffd166;
+      --status-overdue: #ff4d6a;
+      --font-heading: "Georgia", "Times New Roman", serif;
+      --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-data: "SFMono-Regular", "Consolas", "Liberation Mono", monospace;
+      --sidebar-width: 260px;
+    }
+
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg-primary: #f4f5f9;
+        --bg-secondary: #ffffff;
+        --bg-card: #ffffff;
+        --bg-hover: #f0f2f8;
+        --bg-sidebar: #ebedf5;
+        --text-primary: #1a1d27;
+        --text-secondary: #4a5068;
+        --text-muted: #8890a8;
+        --border: #d8dce8;
+        --accent: #4a6cf7;
+        --accent-dim: #8ca0ff;
+      }
+    }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+    }
+
+    /* === Sidebar === */
+    .sidebar {
+      width: var(--sidebar-width);
+      min-height: 100vh;
+      background: var(--bg-sidebar);
+      border-right: 1px solid var(--border);
+      padding: 1.5rem 0;
+      position: fixed;
+      top: 0;
+      left: 0;
+      overflow-y: auto;
+    }
+
+    .sidebar-brand {
+      padding: 0 1.5rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 1rem;
+    }
+
+    .sidebar-brand h1 {
+      font-family: var(--font-heading);
+      font-size: 1.125rem;
+      color: var(--text-primary);
+    }
+
+    .sidebar-brand p {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+
+    .sidebar-nav {
+      list-style: none;
+    }
+
+    .sidebar-nav li a {
+      display: block;
+      padding: 0.6rem 1.5rem;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.875rem;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .sidebar-nav li a:hover,
+    .sidebar-nav li a.active {
+      background: var(--bg-hover);
+      color: var(--accent);
+    }
+
+    .sidebar-nav li a.active {
+      border-right: 3px solid var(--accent);
+    }
+
+    /* === Filters === */
+    .sidebar-filters {
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--border);
+      margin-top: 1rem;
+    }
+
+    .sidebar-filters h3 {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .filter-group {
+      margin-bottom: 1rem;
+    }
+
+    .filter-group label {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.3rem;
+    }
+
+    .filter-group select {
+      width: 100%;
+      padding: 0.4rem 0.6rem;
+      background: var(--bg-card);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-size: 0.8rem;
+      font-family: var(--font-body);
+    }
+
+    /* === Main Content === */
+    .main-content {
+      margin-left: var(--sidebar-width);
+      flex: 1;
+      padding: 2rem;
+      min-height: 100vh;
+    }
+
+    /* === Header === */
+    .dashboard-header {
+      margin-bottom: 2rem;
+    }
+
+    .dashboard-header h2 {
+      font-family: var(--font-heading);
+      font-size: 1.5rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .dashboard-header p {
+      color: var(--text-muted);
+      font-size: 0.875rem;
+    }
+
+    /* === KPI Cards === */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .kpi-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.25rem;
+    }
+
+    .kpi-card .kpi-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+    }
+
+    .kpi-card .kpi-value {
+      font-family: var(--font-data);
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .kpi-card .kpi-change {
+      font-size: 0.75rem;
+      margin-top: 0.25rem;
+    }
+
+    .kpi-change.positive { color: var(--risk-low); }
+    .kpi-change.negative { color: var(--risk-critical); }
+
+    /* === Dashboard Sections === */
+    .dashboard-section {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      overflow: hidden;
+    }
+
+    .dashboard-section-header {
+      padding: 1rem 1.5rem;
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .dashboard-section-header h3 {
+      font-family: var(--font-heading);
+      font-size: 1.05rem;
+    }
+
+    .dashboard-section-body {
+      padding: 1.5rem;
+    }
+
+    /* === Tables === */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+
+    thead th {
+      background: var(--bg-card);
+      color: var(--text-secondary);
+      font-family: var(--font-data);
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 0.7rem 1rem;
+      text-align: left;
+      border-bottom: 2px solid var(--border);
+      cursor: pointer;
+      user-select: none;
+      white-space: nowrap;
+    }
+
+    thead th:hover { color: var(--accent); }
+    thead th .sort-indicator { margin-left: 0.25rem; }
+
+    tbody td {
+      padding: 0.7rem 1rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+
+    tbody tr:hover { background: var(--bg-hover); }
+
+    /* === Risk / Status Badges === */
+    .badge {
+      display: inline-block;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      font-family: var(--font-data);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .badge-critical { background: var(--risk-critical); color: #fff; }
+    .badge-high { background: var(--risk-high); color: #1a1d27; }
+    .badge-medium { background: var(--risk-medium); color: #1a1d27; }
+    .badge-low { background: var(--risk-low); color: #1a1d27; }
+    .badge-active { background: var(--status-active); color: #1a1d27; }
+    .badge-pending { background: var(--status-pending); color: #1a1d27; }
+    .badge-overdue { background: var(--status-overdue); color: #fff; }
+
+    /* === Heat Map === */
+    .heatmap-container {
+      overflow-x: auto;
+    }
+
+    .heatmap-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 0.4rem;
+    }
+
+    .heatmap-cell {
+      padding: 0.75rem 0.5rem;
+      border-radius: 4px;
+      text-align: center;
+      font-family: var(--font-data);
+      font-size: 0.7rem;
+      font-weight: 600;
+      transition: transform 0.1s;
+    }
+
+    .heatmap-cell:hover {
+      transform: scale(1.05);
+      z-index: 1;
+    }
+
+    /* === Compliance Grid === */
+    .compliance-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 1rem;
+    }
+
+    .compliance-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1rem;
+    }
+
+    .compliance-card h4 {
+      font-size: 0.85rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .compliance-bar {
+      height: 6px;
+      background: var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-top: 0.5rem;
+    }
+
+    .compliance-bar-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 0.3s;
+    }
+
+    /* === Deadline List === */
+    .deadline-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .deadline-item:last-child { border-bottom: none; }
+
+    .deadline-date {
+      font-family: var(--font-data);
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      min-width: 100px;
+    }
+
+    .deadline-desc {
+      flex: 1;
+      font-size: 0.85rem;
+    }
+
+    .deadline-days {
+      font-family: var(--font-data);
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+    }
+
+    .days-ok { background: var(--risk-low); color: #1a1d27; }
+    .days-warn { background: var(--risk-medium); color: #1a1d27; }
+    .days-urgent { background: var(--risk-critical); color: #fff; }
+
+    /* === Footer === */
+    .dashboard-footer {
+      margin-top: 2rem;
+      padding: 1rem;
+      text-align: center;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* === Print Mode === */
+    @media print {
+      body {
+        background: #fff;
+        color: #000;
+        display: block;
+      }
+
+      .sidebar { display: none; }
+
+      .main-content {
+        margin-left: 0;
+        padding: 0;
+      }
+
+      .dashboard-section { break-inside: avoid; border-color: #ccc; }
+      .kpi-card { break-inside: avoid; border-color: #ccc; }
+
+      .badge-critical, .badge-high, .badge-medium, .badge-low,
+      .badge-active, .badge-pending, .badge-overdue,
+      .heatmap-cell, .days-ok, .days-warn, .days-urgent {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+    }
+
+    /* === Responsive === */
+    @media (max-width: 768px) {
+      .sidebar {
+        display: none;
+      }
+
+      .main-content {
+        margin-left: 0;
+        padding: 1rem;
+      }
+
+      .kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar Navigation -->
+  <nav class="sidebar" aria-label="Dashboard navigation">
+    <div class="sidebar-brand">
+      <h1><!-- AGENT: dashboard-title -->Legal Dashboard<!-- /AGENT --></h1>
+      <p>Legal Engineering</p>
+    </div>
+
+    <ul class="sidebar-nav" role="navigation">
+      <!-- AGENT: sidebar-nav -->
+      <li><a href="#summary" class="active">Summary</a></li>
+      <li><a href="#matters">Matters</a></li>
+      <li><a href="#compliance">Compliance</a></li>
+      <li><a href="#deadlines">Deadlines</a></li>
+      <li><a href="#risks">Risk Map</a></li>
+      <!-- /AGENT -->
+    </ul>
+
+    <div class="sidebar-filters">
+      <h3>Filters</h3>
+      <div class="filter-group">
+        <label for="filter-jurisdiction">Jurisdiction</label>
+        <select id="filter-jurisdiction" onchange="applyFilters()">
+          <option value="all">All Jurisdictions</option>
+          <!-- AGENT: jurisdiction-options -->
+          <!-- /AGENT -->
+        </select>
+      </div>
+      <div class="filter-group">
+        <label for="filter-risk">Risk Level</label>
+        <select id="filter-risk" onchange="applyFilters()">
+          <option value="all">All Levels</option>
+          <option value="critical">Critical</option>
+          <option value="high">High</option>
+          <option value="medium">Medium</option>
+          <option value="low">Low</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label for="filter-status">Status</label>
+        <select id="filter-status" onchange="applyFilters()">
+          <option value="all">All Statuses</option>
+          <option value="active">Active</option>
+          <option value="pending">Pending</option>
+          <option value="overdue">Overdue</option>
+        </select>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="main-content">
+
+    <!-- Dashboard Header -->
+    <div class="dashboard-header">
+      <h2><!-- AGENT: page-title -->Dashboard Overview<!-- /AGENT --></h2>
+      <p><!-- AGENT: page-subtitle -->Generated by Legal Engineering<!-- /AGENT --></p>
+    </div>
+
+    <!-- KPI Summary Cards -->
+    <div class="kpi-grid" id="summary">
+      <!-- AGENT: summary-stats -->
+      <div class="kpi-card">
+        <div class="kpi-label">Active Matters</div>
+        <div class="kpi-value">--</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Open Risks</div>
+        <div class="kpi-value">--</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Upcoming Deadlines</div>
+        <div class="kpi-value">--</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Compliance Score</div>
+        <div class="kpi-value">--%</div>
+      </div>
+      <!-- /AGENT -->
+    </div>
+
+    <!-- Matter List -->
+    <div class="dashboard-section" id="matters">
+      <div class="dashboard-section-header">
+        <h3>Matter List</h3>
+      </div>
+      <div class="dashboard-section-body">
+        <!-- AGENT: matter-list -->
+        <table id="matter-table" aria-label="Matter List">
+          <thead>
+            <tr>
+              <th data-sort="string">Matter</th>
+              <th data-sort="string">Jurisdiction</th>
+              <th data-sort="string">Status</th>
+              <th data-sort="string">Risk</th>
+              <th data-sort="string">Next Deadline</th>
+              <th data-sort="string">Lead</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr data-jurisdiction="" data-risk="" data-status="">
+              <td>[Matter Name]</td>
+              <td>[Jurisdiction]</td>
+              <td><span class="badge badge-active">Active</span></td>
+              <td><span class="badge badge-low">Low</span></td>
+              <td>[Date]</td>
+              <td>[Lead]</td>
+            </tr>
+          </tbody>
+        </table>
+        <!-- /AGENT -->
+      </div>
+    </div>
+
+    <!-- Compliance Grid -->
+    <div class="dashboard-section" id="compliance">
+      <div class="dashboard-section-header">
+        <h3>Compliance Status</h3>
+      </div>
+      <div class="dashboard-section-body">
+        <!-- AGENT: compliance-grid -->
+        <div class="compliance-grid">
+          <div class="compliance-card">
+            <h4>[Regime Name]</h4>
+            <p style="font-size: 0.8rem; color: var(--text-secondary)">[Jurisdiction]</p>
+            <div class="compliance-bar">
+              <div class="compliance-bar-fill" style="width: 0%; background: var(--risk-low)"></div>
+            </div>
+            <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.3rem">0% complete</p>
+          </div>
+        </div>
+        <!-- /AGENT -->
+      </div>
+    </div>
+
+    <!-- Deadline Tracker -->
+    <div class="dashboard-section" id="deadlines">
+      <div class="dashboard-section-header">
+        <h3>Upcoming Deadlines</h3>
+      </div>
+      <div class="dashboard-section-body">
+        <!-- AGENT: deadline-tracker -->
+        <div class="deadline-item">
+          <span class="deadline-date">[Date]</span>
+          <span class="deadline-desc">[Deadline description]</span>
+          <span class="deadline-days days-ok">[N] days</span>
+        </div>
+        <!-- /AGENT -->
+      </div>
+    </div>
+
+    <!-- Risk Heat Map -->
+    <div class="dashboard-section" id="risks">
+      <div class="dashboard-section-header">
+        <h3>Risk Assessment Heat Map</h3>
+      </div>
+      <div class="dashboard-section-body">
+        <div class="heatmap-container">
+          <!-- AGENT: risk-heatmap -->
+          <div class="heatmap-grid">
+            <div class="heatmap-cell" style="background: var(--risk-low); color: #1a1d27">[Item]</div>
+            <div class="heatmap-cell" style="background: var(--risk-medium); color: #1a1d27">[Item]</div>
+            <div class="heatmap-cell" style="background: var(--risk-high); color: #1a1d27">[Item]</div>
+            <div class="heatmap-cell" style="background: var(--risk-critical); color: #fff">[Item]</div>
+          </div>
+          <!-- /AGENT -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="dashboard-footer">
+      <p>Generated by Legal Engineering &middot; <!-- AGENT: footer-date -->[Date]<!-- /AGENT --></p>
+      <p>This dashboard is a work product and does not constitute legal advice.</p>
+    </footer>
+
+  </main>
+
+  <script>
+    /* === Sidebar Navigation === */
+    document.querySelectorAll('.sidebar-nav a').forEach(function(link) {
+      link.addEventListener('click', function(e) {
+        document.querySelectorAll('.sidebar-nav a').forEach(function(l) {
+          l.classList.remove('active');
+        });
+        this.classList.add('active');
+      });
+    });
+
+    /* === Sortable Tables === */
+    document.querySelectorAll('thead th[data-sort]').forEach(function(th) {
+      th.addEventListener('click', function() {
+        var table = this.closest('table');
+        var tbody = table.querySelector('tbody');
+        var rows = Array.from(tbody.querySelectorAll('tr'));
+        var colIndex = Array.from(this.parentNode.children).indexOf(this);
+        var sortType = this.getAttribute('data-sort');
+        var currentDir = this.getAttribute('data-sort-dir') || 'asc';
+        var newDir = currentDir === 'asc' ? 'desc' : 'asc';
+
+        table.querySelectorAll('thead th').forEach(function(h) {
+          h.removeAttribute('data-sort-dir');
+          var ind = h.querySelector('.sort-indicator');
+          if (ind) ind.textContent = '';
+        });
+
+        this.setAttribute('data-sort-dir', newDir);
+        var indicator = this.querySelector('.sort-indicator');
+        if (!indicator) {
+          indicator = document.createElement('span');
+          indicator.className = 'sort-indicator';
+          this.appendChild(indicator);
+        }
+        indicator.textContent = newDir === 'asc' ? ' ▲' : ' ▼';
+
+        rows.sort(function(a, b) {
+          var aVal = a.children[colIndex] ? a.children[colIndex].textContent.trim() : '';
+          var bVal = b.children[colIndex] ? b.children[colIndex].textContent.trim() : '';
+          if (sortType === 'number') {
+            aVal = parseFloat(aVal.replace(/[^0-9.\-]/g, '')) || 0;
+            bVal = parseFloat(bVal.replace(/[^0-9.\-]/g, '')) || 0;
+            return newDir === 'asc' ? aVal - bVal : bVal - aVal;
+          }
+          return newDir === 'asc' ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+        });
+
+        rows.forEach(function(row) { tbody.appendChild(row); });
+      });
+    });
+
+    /* === Filtering === */
+    function applyFilters() {
+      var jurisdiction = document.getElementById('filter-jurisdiction').value;
+      var risk = document.getElementById('filter-risk').value;
+      var status = document.getElementById('filter-status').value;
+
+      document.querySelectorAll('tbody tr[data-jurisdiction]').forEach(function(row) {
+        var show = true;
+        if (jurisdiction !== 'all' && row.getAttribute('data-jurisdiction') !== jurisdiction) show = false;
+        if (risk !== 'all' && row.getAttribute('data-risk') !== risk) show = false;
+        if (status !== 'all' && row.getAttribute('data-status') !== status) show = false;
+        row.style.display = show ? '' : 'none';
+      });
+    }
+  </script>
+</body>
+</html>

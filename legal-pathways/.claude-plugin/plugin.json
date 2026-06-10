@@ -1,0 +1,62 @@
+{
+  "name": "legal-pathways",
+  "displayName": "Legal Pathways Engineering",
+  "version": "0.1.0",
+  "license": "MIT",
+  "description": "Cross-border credential, licensing, and immigration pathway optimizer. Treats professional licensing boards, aviation authorities, and immigration systems as modular building blocks — finds the fastest, cheapest, and most legally robust pathway to your target credential or status. Built for ambitious professionals navigating international regulatory systems.",
+  "author": {
+    "name": "Zereo"
+  },
+  "homepage": "https://github.com/Zereo0317/legal-engineering-public",
+  "repository": "https://github.com/Zereo0317/legal-engineering-public",
+  "categories": [
+    "legal",
+    "immigration",
+    "licensing",
+    "credentials",
+    "aviation",
+    "research"
+  ],
+  "capabilities": {
+    "skills": true,
+    "agents": true,
+    "hooks": true,
+    "mcp": true
+  },
+  "userConfig": {
+    "COURTLISTENER_API_KEY": {
+      "type": "string",
+      "description": "CourtListener API key for US case law research (free at courtlistener.com/help/api/)",
+      "required": false
+    },
+    "CONGRESS_API_KEY": {
+      "type": "string",
+      "description": "Congress.gov API key for US legislation (free at api.congress.gov/sign-up/)",
+      "required": false
+    },
+    "OECD_API_KEY": {
+      "description": "API key for OECD tax treaty database access",
+      "required": false
+    },
+    "SEC_EDGAR_EMAIL": {
+      "description": "Email address for SEC EDGAR API rate limit identification",
+      "required": false
+    },
+    "SINGAPORE_ELIT_API_KEY": {
+      "description": "API key for Singapore eLitigation access",
+      "required": false
+    },
+    "TAIWAN_JUDICIAL_API_KEY": {
+      "description": "API key for Taiwan Judicial Yuan database access",
+      "required": false
+    },
+    "EU_COMPLIANCE_API_KEY": {
+      "description": "API key for EU compliance database access",
+      "required": false
+    },
+    "VAQUILL_API_KEY": {
+      "description": "API key for Vaquill AI semantic legal search (8M+ US opinions, USC, CFR)",
+      "required": false
+    }
+  }
+}

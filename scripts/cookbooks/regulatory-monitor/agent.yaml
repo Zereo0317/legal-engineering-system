@@ -1,0 +1,13 @@
+name: regulatory-monitor-headless
+description: Headless agent that monitors regulatory changes across target jurisdictions
+model: sonnet
+schedule: daily
+tools:
+  - Read
+  - Grep
+  - Glob
+  - Agent
+subagents:
+  - regulatory-scanner
+  - treaty-change-detector
+  - compliance-alerter

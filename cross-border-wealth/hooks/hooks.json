@@ -1,0 +1,28 @@
+{
+  "description": "Cross-Border Wealth plugin hooks for connectivity check and privacy classification",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo 'Legal Engineering plugin loaded. Checking Westlaw MCP connectivity...' && python3 -c \"import sys; sys.exit(0)\" 2>/dev/null && echo 'Python available.' || echo 'Python not found — Westlaw MCP requires Python 3.10+.'",
+            "timeout": 10000
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit|WebFetch|mcp__*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/privacy-check.sh",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  }
+}

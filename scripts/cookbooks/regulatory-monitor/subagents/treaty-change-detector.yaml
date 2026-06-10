@@ -1,0 +1,21 @@
+name: treaty-change-detector
+description: Detects changes to bilateral tax treaties and MLI reservations
+model: haiku
+tools:
+  - Read
+  - WebSearch
+  - mcp__westlaw
+output_schema:
+  type: object
+  properties:
+    treaty_changes:
+      type: array
+      items:
+        type: object
+        properties:
+          treaty_pair: { type: string }
+          article_affected: { type: string }
+          change_type: { type: string, enum: [new_treaty, amendment, termination, mli_modification, renegotiation] }
+          impact_on_structures: { type: string }
+          effective_date: { type: string }
+          source: { type: string }

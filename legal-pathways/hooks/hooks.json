@@ -1,0 +1,27 @@
+{
+  "description": "Legal Pathways plugin hooks for privacy classification and session initialization",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo 'Legal Pathways session initialized'"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit|WebFetch|mcp__*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/privacy-check.sh",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  }
+}

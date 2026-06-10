@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline'; style-src 'unsafe-inline'">
+  <title>Adversarial Analysis Report</title>
+  <style>
+    /* === Reset & Base === */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-primary: #0f1117;
+      --bg-secondary: #1a1d27;
+      --bg-card: #222639;
+      --bg-hover: #2a2f45;
+      --text-primary: #e8eaf0;
+      --text-secondary: #9ca3b8;
+      --text-muted: #6b7394;
+      --border: #2e3450;
+      --accent: #6c8cff;
+      --advocate: #06d6a0;
+      --advocate-bg: rgba(6, 214, 160, 0.1);
+      --adversary: #ff4d6a;
+      --adversary-bg: rgba(255, 77, 106, 0.1);
+      --judicial: #6c8cff;
+      --judicial-bg: rgba(108, 140, 255, 0.1);
+      --strength-strong: #06d6a0;
+      --strength-moderate: #ffd166;
+      --strength-weak: #ff8c42;
+      --font-heading: "Georgia", "Times New Roman", serif;
+      --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-data: "SFMono-Regular", "Consolas", "Liberation Mono", monospace;
+    }
+
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg-primary: #f8f9fc;
+        --bg-secondary: #ffffff;
+        --bg-card: #ffffff;
+        --bg-hover: #f0f2f8;
+        --text-primary: #1a1d27;
+        --text-secondary: #4a5068;
+        --text-muted: #8890a8;
+        --border: #d8dce8;
+        --accent: #4a6cf7;
+        --advocate-bg: rgba(6, 214, 160, 0.08);
+        --adversary-bg: rgba(255, 77, 106, 0.08);
+        --judicial-bg: rgba(108, 140, 255, 0.08);
+      }
+    }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* === Layout === */
+    .report-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    /* === Header === */
+    .report-header {
+      text-align: center;
+      margin-bottom: 2rem;
+      padding: 2rem;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+
+    .report-header h1 {
+      font-family: var(--font-heading);
+      font-size: 1.75rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .report-header .subtitle {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .report-meta {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-top: 1rem;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+
+    /* === Position Summary === */
+    .position-summary {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .position-summary h2 {
+      font-family: var(--font-heading);
+      font-size: 1.1rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .position-summary p {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    /* === Three-Column Layout === */
+    .three-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .col {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .col-header {
+      padding: 1rem 1.25rem;
+      font-family: var(--font-heading);
+      font-size: 1rem;
+      font-weight: 700;
+      text-align: center;
+      border-bottom: 2px solid;
+    }
+
+    .col-advocate .col-header {
+      background: var(--advocate-bg);
+      color: var(--advocate);
+      border-bottom-color: var(--advocate);
+    }
+
+    .col-judicial .col-header {
+      background: var(--judicial-bg);
+      color: var(--judicial);
+      border-bottom-color: var(--judicial);
+    }
+
+    .col-adversary .col-header {
+      background: var(--adversary-bg);
+      color: var(--adversary);
+      border-bottom-color: var(--adversary);
+    }
+
+    .col-body {
+      padding: 1rem;
+    }
+
+    /* === Argument Cards === */
+    .argument-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .argument-card:last-child { margin-bottom: 0; }
+
+    .argument-id {
+      font-family: var(--font-data);
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.5rem;
+    }
+
+    .col-advocate .argument-id { color: var(--advocate); }
+    .col-adversary .argument-id { color: var(--adversary); }
+    .col-judicial .argument-id { color: var(--judicial); }
+
+    .argument-title {
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .argument-body {
+      font-size: 0.825rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .argument-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 0.75rem;
+      padding-top: 0.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    /* === Strength / Severity Badges === */
+    .strength-badge {
+      display: inline-block;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      font-family: var(--font-data);
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .strength-strong { background: var(--strength-strong); color: #1a1d27; }
+    .strength-moderate { background: var(--strength-moderate); color: #1a1d27; }
+    .strength-weak { background: var(--strength-weak); color: #1a1d27; }
+    .severity-critical { background: var(--adversary); color: #fff; }
+    .severity-significant { background: var(--strength-weak); color: #1a1d27; }
+    .severity-minor { background: var(--strength-moderate); color: #1a1d27; }
+
+    .score-value {
+      font-family: var(--font-data);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* === Rebuttal Link === */
+    .rebuttal-link {
+      font-family: var(--font-data);
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    /* === Probability Meter === */
+    .probability-section {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .probability-section h2 {
+      font-family: var(--font-heading);
+      font-size: 1.1rem;
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .prob-meter {
+      display: flex;
+      height: 40px;
+      border-radius: 6px;
+      overflow: hidden;
+      margin-bottom: 1rem;
+    }
+
+    .prob-segment {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-data);
+      font-size: 0.75rem;
+      font-weight: 700;
+      transition: flex-basis 0.3s;
+    }
+
+    .prob-upheld { background: var(--advocate); color: #1a1d27; }
+    .prob-modified { background: var(--strength-moderate); color: #1a1d27; }
+    .prob-partial { background: var(--strength-weak); color: #1a1d27; }
+    .prob-denied { background: var(--adversary); color: #fff; }
+
+    .prob-legend {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      font-size: 0.8rem;
+    }
+
+    .prob-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .prob-legend-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+    }
+
+    /* === Probability Table === */
+    .prob-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1.5rem;
+      font-size: 0.85rem;
+    }
+
+    .prob-table thead th {
+      background: var(--bg-card);
+      color: var(--text-secondary);
+      font-family: var(--font-data);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 0.6rem 1rem;
+      text-align: left;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .prob-table tbody td {
+      padding: 0.6rem 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* === Decision Tree === */
+    .decision-tree {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .decision-tree h2 {
+      font-family: var(--font-heading);
+      font-size: 1.1rem;
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .decision-node {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+
+    .decision-condition {
+      font-family: var(--font-data);
+      font-size: 0.8rem;
+      color: var(--accent);
+      min-width: 200px;
+      flex-shrink: 0;
+    }
+
+    .decision-action {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    .decision-arrow {
+      font-size: 0.9rem;
+      color: var(--accent);
+      margin-right: 0.5rem;
+    }
+
+    /* === Footer === */
+    .report-footer {
+      text-align: center;
+      padding: 1.5rem;
+      margin-top: 2rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    /* === Print Mode === */
+    @media print {
+      body {
+        background: #fff;
+        color: #000;
+        font-size: 10pt;
+      }
+
+      .report-container { max-width: 100%; padding: 0; }
+
+      .three-col {
+        grid-template-columns: 1fr 1fr 1fr;
+      }
+
+      .col, .argument-card, .probability-section, .decision-tree, .position-summary, .report-header {
+        break-inside: avoid;
+        border-color: #ccc;
+      }
+
+      .col-advocate .col-header { background: rgba(6, 214, 160, 0.15) !important; }
+      .col-adversary .col-header { background: rgba(255, 77, 106, 0.15) !important; }
+      .col-judicial .col-header { background: rgba(108, 140, 255, 0.15) !important; }
+
+      .prob-segment, .strength-badge, .severity-critical, .severity-significant, .severity-minor {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+    }
+
+    /* === Responsive === */
+    @media (max-width: 1024px) {
+      .three-col {
+        grid-template-columns: 1fr;
+      }
+
+      .report-container { padding: 1rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="report-container">
+
+    <!-- Report Header -->
+    <header class="report-header">
+      <h1><!-- AGENT: report-title -->Adversarial Analysis Report<!-- /AGENT --></h1>
+      <p class="subtitle"><!-- AGENT: report-subtitle -->Structured adversarial assessment of legal position<!-- /AGENT --></p>
+      <div class="report-meta">
+        <span><!-- AGENT: report-date -->[Date]<!-- /AGENT --></span>
+        <span><!-- AGENT: jurisdiction -->[Jurisdiction]<!-- /AGENT --></span>
+        <span><!-- AGENT: classification -->Privileged &amp; Confidential<!-- /AGENT --></span>
+      </div>
+    </header>
+
+    <!-- Position Under Review -->
+    <div class="position-summary">
+      <h2>Position Under Review</h2>
+      <!-- AGENT: position-summary -->
+      <p>Replace this placeholder with a description of the legal position being tested.</p>
+      <!-- /AGENT -->
+    </div>
+
+    <!-- Three-Column Analysis -->
+    <div class="three-col">
+
+      <!-- Advocate Column -->
+      <div class="col col-advocate">
+        <div class="col-header">Advocate</div>
+        <div class="col-body">
+          <!-- AGENT: advocate-arguments -->
+          <div class="argument-card">
+            <div class="argument-id">ADV-001</div>
+            <div class="argument-title">[Argument Title]</div>
+            <div class="argument-body">[Argument description and supporting authority]</div>
+            <div class="argument-footer">
+              <span class="strength-badge strength-strong">Strong</span>
+              <span class="score-value">8/10</span>
+            </div>
+          </div>
+          <!-- /AGENT -->
+        </div>
+      </div>
+
+      <!-- Judicial Analysis Column -->
+      <div class="col col-judicial">
+        <div class="col-header">Judicial Analysis</div>
+        <div class="col-body">
+          <!-- AGENT: judicial-analysis -->
+          <div class="argument-card">
+            <div class="argument-id">JUD-001</div>
+            <div class="argument-title">[Assessment Point]</div>
+            <div class="argument-body">[Neutral synthesis of ADV and OPP arguments]</div>
+            <div class="argument-footer">
+              <span class="rebuttal-link">ADV-001 vs OPP-001</span>
+              <span class="score-value">Advantage: --</span>
+            </div>
+          </div>
+          <!-- /AGENT -->
+        </div>
+      </div>
+
+      <!-- Adversary Column -->
+      <div class="col col-adversary">
+        <div class="col-header">Adversary</div>
+        <div class="col-body">
+          <!-- AGENT: adversary-arguments -->
+          <div class="argument-card">
+            <div class="argument-id">OPP-001</div>
+            <div class="argument-title">[Argument Title]</div>
+            <div class="argument-body">[Counter-argument and undermining authority]</div>
+            <div class="argument-footer">
+              <span class="strength-badge severity-significant">Significant</span>
+              <span class="score-value">7/10</span>
+            </div>
+          </div>
+          <!-- /AGENT -->
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Probability Assessment -->
+    <div class="probability-section">
+      <h2>Probability Assessment</h2>
+
+      <!-- AGENT: probability-meter -->
+      <div class="prob-meter">
+        <div class="prob-segment prob-upheld" style="flex-basis: 25%">25%</div>
+        <div class="prob-segment prob-modified" style="flex-basis: 25%">25%</div>
+        <div class="prob-segment prob-partial" style="flex-basis: 25%">25%</div>
+        <div class="prob-segment prob-denied" style="flex-basis: 25%">25%</div>
+      </div>
+
+      <div class="prob-legend">
+        <div class="prob-legend-item">
+          <div class="prob-legend-dot" style="background: var(--advocate)"></div>
+          <span>Upheld</span>
+        </div>
+        <div class="prob-legend-item">
+          <div class="prob-legend-dot" style="background: var(--strength-moderate)"></div>
+          <span>Modified</span>
+        </div>
+        <div class="prob-legend-item">
+          <div class="prob-legend-dot" style="background: var(--strength-weak)"></div>
+          <span>Partial Denial</span>
+        </div>
+        <div class="prob-legend-item">
+          <div class="prob-legend-dot" style="background: var(--adversary)"></div>
+          <span>Denied</span>
+        </div>
+      </div>
+
+      <table class="prob-table">
+        <thead>
+          <tr>
+            <th>Outcome</th>
+            <th>Probability</th>
+            <th>Financial Impact</th>
+            <th>Expected Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Position upheld</td>
+            <td>--%</td>
+            <td>$0</td>
+            <td>--</td>
+          </tr>
+          <tr>
+            <td>Upheld with modifications</td>
+            <td>--%</td>
+            <td>--</td>
+            <td>--</td>
+          </tr>
+          <tr>
+            <td>Partial denial</td>
+            <td>--%</td>
+            <td>--</td>
+            <td>--</td>
+          </tr>
+          <tr>
+            <td>Full denial</td>
+            <td>--%</td>
+            <td>--</td>
+            <td>--</td>
+          </tr>
+        </tbody>
+      </table>
+      <!-- /AGENT -->
+    </div>
+
+    <!-- Decision Tree -->
+    <div class="decision-tree">
+      <h2>Recommended Course of Action</h2>
+      <!-- AGENT: decision-tree -->
+      <div class="decision-node">
+        <div class="decision-condition">IF success &gt; 70%</div>
+        <div class="decision-action"><span class="decision-arrow">&rarr;</span> PROCEED with position, document thoroughly</div>
+      </div>
+      <div class="decision-node">
+        <div class="decision-condition">IF success 40-70%</div>
+        <div class="decision-action"><span class="decision-arrow">&rarr;</span> CONSIDER modifications to strengthen position</div>
+      </div>
+      <div class="decision-node">
+        <div class="decision-condition">IF success &lt; 40%</div>
+        <div class="decision-action"><span class="decision-arrow">&rarr;</span> RESTRUCTURE or ABANDON position</div>
+      </div>
+      <!-- /AGENT -->
+    </div>
+
+    <!-- Footer -->
+    <footer class="report-footer">
+      <p>Generated by Legal Engineering &middot; <!-- AGENT: footer-date -->[Date]<!-- /AGENT --></p>
+      <p>This document is a work product and does not constitute legal advice.</p>
+    </footer>
+
+  </div>
+</body>
+</html>

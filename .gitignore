@@ -1,0 +1,54 @@
+# ── Secrets / environment (NEVER commit) ──────────────────────────────
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*_secret*
+*secret.json
+*credentials*.json
+service-account*.json
+*-sa.json
+
+# ── Python ────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+*.egg-info/
+.eggs/
+
+# ── Node ──────────────────────────────────────────────────────────────
+node_modules/
+npm-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# ── Build / generated artifacts ───────────────────────────────────────
+dist/
+build/
+out/
+.next/
+.cache/
+outputs/
+tmp/
+*.log
+
+# ── OS / editor cruft ─────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/
+*.swp
+*~

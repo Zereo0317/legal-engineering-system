@@ -1,0 +1,82 @@
+{
+  "name": "cross-border-wealth",
+  "displayName": "Cross-Border Wealth & Tax",
+  "version": "0.3.0",
+  "license": "MIT",
+  "description": "Legal engineering optimizer for cross-border wealth structuring, tax litigation research, and multi-jurisdiction entity architecture. Analyzes structures like LEGO — modular, repeatable, optimizable. Integrates Westlaw Classic MCP, produces HTML reports, and executes actions across Gmail, web search, and connected tools. Grounded to truth with self-verification at every step.",
+  "author": {
+    "name": "Connact AI",
+    "email": "zereo@connact.ai"
+  },
+  "homepage": "https://github.com/Zereo0317/legal-engineering-public",
+  "repository": "https://github.com/Zereo0317/legal-engineering-public",
+  "categories": [
+    "legal",
+    "tax",
+    "compliance",
+    "research"
+  ],
+  "capabilities": {
+    "skills": true,
+    "agents": true,
+    "hooks": true,
+    "mcp": true
+  },
+  "userConfig": {
+    "WESTLAW_CLIENT_ID": {
+      "type": "string",
+      "description": "Westlaw institutional client ID (e.g., your university or firm ID)",
+      "required": false
+    },
+    "WESTLAW_USERNAME": {
+      "type": "string",
+      "description": "Westlaw username for institutional access",
+      "required": false
+    },
+    "WESTLAW_PASSWORD": {
+      "type": "string",
+      "sensitive": true,
+      "description": "Westlaw password (stored securely, never logged)",
+      "required": false
+    },
+    "WESTLAW_BASE_URL": {
+      "type": "string",
+      "description": "Westlaw WAYFLESS URL for institutional SSO access",
+      "required": false
+    },
+    "COURTLISTENER_API_KEY": {
+      "type": "string",
+      "description": "CourtListener API key (free at courtlistener.com/help/api/)",
+      "required": false
+    },
+    "CONGRESS_API_KEY": {
+      "type": "string",
+      "description": "Congress.gov API key (free at api.congress.gov/sign-up/)",
+      "required": false
+    },
+    "OECD_API_KEY": {
+      "description": "API key for OECD tax treaty database access",
+      "required": false
+    },
+    "SEC_EDGAR_EMAIL": {
+      "description": "Email address for SEC EDGAR API rate limit identification",
+      "required": false
+    },
+    "SINGAPORE_ELIT_API_KEY": {
+      "description": "API key for Singapore eLitigation access",
+      "required": false
+    },
+    "TAIWAN_JUDICIAL_API_KEY": {
+      "description": "API key for Taiwan Judicial Yuan database access",
+      "required": false
+    },
+    "EU_COMPLIANCE_API_KEY": {
+      "description": "API key for EU compliance database access",
+      "required": false
+    },
+    "VAQUILL_API_KEY": {
+      "description": "API key for Vaquill AI semantic legal search (8M+ US opinions, USC, CFR)",
+      "required": false
+    }
+  }
+}

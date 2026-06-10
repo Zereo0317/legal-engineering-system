@@ -1,0 +1,20 @@
+name: compliance-alerter
+description: Generates compliance alerts when regulatory changes affect client obligations
+model: haiku
+tools:
+  - Read
+  - Grep
+output_schema:
+  type: object
+  properties:
+    alerts:
+      type: array
+      items:
+        type: object
+        properties:
+          severity: { type: string, enum: [critical, high, medium, low] }
+          jurisdiction: { type: string }
+          obligation: { type: string }
+          deadline: { type: string }
+          action_required: { type: string }
+          affected_structures: { type: array, items: { type: string } }

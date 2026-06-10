@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline'; style-src 'unsafe-inline'">
+  <title>Legal Engineering Report</title>
+  <style>
+    /* === Reset & Base === */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-primary: #0f1117;
+      --bg-secondary: #1a1d27;
+      --bg-card: #222639;
+      --bg-hover: #2a2f45;
+      --text-primary: #e8eaf0;
+      --text-secondary: #9ca3b8;
+      --text-muted: #6b7394;
+      --border: #2e3450;
+      --accent: #6c8cff;
+      --accent-dim: #4a5fa0;
+      --risk-critical: #ff4d6a;
+      --risk-high: #ff8c42;
+      --risk-medium: #ffd166;
+      --risk-low: #06d6a0;
+      --font-heading: "Georgia", "Times New Roman", serif;
+      --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-data: "SFMono-Regular", "Consolas", "Liberation Mono", monospace;
+    }
+
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg-primary: #f8f9fc;
+        --bg-secondary: #ffffff;
+        --bg-card: #ffffff;
+        --bg-hover: #f0f2f8;
+        --text-primary: #1a1d27;
+        --text-secondary: #4a5068;
+        --text-muted: #8890a8;
+        --border: #d8dce8;
+        --accent: #4a6cf7;
+        --accent-dim: #8ca0ff;
+      }
+    }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* === Layout === */
+    .report-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    /* === Work-Product Header === */
+    .work-product-header {
+      border: 2px solid var(--accent);
+      border-radius: 8px;
+      padding: 1.5rem 2rem;
+      margin-bottom: 1rem;
+      background: var(--bg-secondary);
+    }
+
+    .work-product-header h1 {
+      font-family: var(--font-heading);
+      font-size: 1.75rem;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .work-product-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+    }
+
+    .work-product-meta dt {
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-size: 0.7rem;
+      letter-spacing: 0.05em;
+    }
+
+    .work-product-meta dd { margin: 0; }
+
+    /* === Reviewer Note === */
+    .reviewer-note {
+      background: var(--bg-card);
+      border-left: 4px solid var(--accent);
+      border-radius: 0 8px 8px 0;
+      padding: 1rem 1.5rem;
+      margin-bottom: 2rem;
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+    }
+
+    .reviewer-note strong {
+      color: var(--accent);
+    }
+
+    /* === Section Styling === */
+    .report-section {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      overflow: hidden;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 1.5rem;
+      background: var(--bg-card);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .section-header:hover { background: var(--bg-hover); }
+
+    .section-header h2 {
+      font-family: var(--font-heading);
+      font-size: 1.25rem;
+      color: var(--text-primary);
+    }
+
+    .section-toggle {
+      font-size: 1.25rem;
+      color: var(--text-muted);
+      transition: transform 0.2s ease;
+    }
+
+    .section-header[aria-expanded="false"] .section-toggle {
+      transform: rotate(-90deg);
+    }
+
+    .section-content {
+      padding: 1.5rem;
+    }
+
+    .section-content.collapsed { display: none; }
+
+    /* === Tables === */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+    }
+
+    thead th {
+      background: var(--bg-card);
+      color: var(--text-secondary);
+      font-family: var(--font-data);
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 0.75rem 1rem;
+      text-align: left;
+      border-bottom: 2px solid var(--border);
+      cursor: pointer;
+      user-select: none;
+      white-space: nowrap;
+    }
+
+    thead th:hover { color: var(--accent); }
+    thead th .sort-indicator { margin-left: 0.25rem; }
+
+    tbody td {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border);
+      font-family: var(--font-data);
+      font-size: 0.8125rem;
+      vertical-align: top;
+    }
+
+    tbody tr:hover { background: var(--bg-hover); }
+
+    /* === Risk Badges === */
+    .risk-badge {
+      display: inline-block;
+      padding: 0.2rem 0.6rem;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      font-family: var(--font-data);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .risk-critical { background: var(--risk-critical); color: #fff; }
+    .risk-high { background: var(--risk-high); color: #1a1d27; }
+    .risk-medium { background: var(--risk-medium); color: #1a1d27; }
+    .risk-low { background: var(--risk-low); color: #1a1d27; }
+
+    /* === Heat Map === */
+    .heatmap-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 0.5rem;
+      padding: 1rem 0;
+    }
+
+    .heatmap-cell {
+      padding: 1rem;
+      border-radius: 6px;
+      text-align: center;
+      font-family: var(--font-data);
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    /* === SVG Diagrams === */
+    .diagram-container {
+      width: 100%;
+      overflow-x: auto;
+      padding: 1rem 0;
+    }
+
+    .diagram-container svg {
+      max-width: 100%;
+      height: auto;
+    }
+
+    /* === Footer === */
+    .report-footer {
+      margin-top: 3rem;
+      padding: 1.5rem;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .report-footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    /* === Print Mode === */
+    @media print {
+      body {
+        background: #fff;
+        color: #000;
+        font-size: 11pt;
+      }
+
+      .report-container { max-width: 100%; padding: 0; }
+      .work-product-header { border-color: #000; }
+      .report-section { break-inside: avoid; border-color: #ccc; }
+      .section-header { background: #f5f5f5; cursor: default; }
+      .section-content.collapsed { display: block !important; }
+      .section-toggle { display: none; }
+      .risk-critical { background: #ff4d6a !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .risk-high { background: #ff8c42 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .risk-medium { background: #ffd166 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .risk-low { background: #06d6a0 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .heatmap-cell { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .report-footer { margin-top: 2rem; }
+    }
+
+    /* === Responsive === */
+    @media (max-width: 768px) {
+      .report-container { padding: 1rem; }
+      .work-product-meta { flex-direction: column; gap: 0.75rem; }
+      table { font-size: 0.75rem; }
+      thead th, tbody td { padding: 0.5rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="report-container">
+
+    <!-- Work-Product Header -->
+    <header class="work-product-header">
+      <h1><!-- AGENT: report-title -->Legal Engineering Report<!-- /AGENT --></h1>
+      <dl class="work-product-meta">
+        <div>
+          <dt>Prepared for</dt>
+          <dd><!-- AGENT: client-name -->[Client]<!-- /AGENT --></dd>
+        </div>
+        <div>
+          <dt>Date</dt>
+          <dd><!-- AGENT: report-date -->[Date]<!-- /AGENT --></dd>
+        </div>
+        <div>
+          <dt>Matter</dt>
+          <dd><!-- AGENT: matter-ref -->[Reference]<!-- /AGENT --></dd>
+        </div>
+        <div>
+          <dt>Classification</dt>
+          <dd><!-- AGENT: classification -->Privileged &amp; Confidential<!-- /AGENT --></dd>
+        </div>
+      </dl>
+    </header>
+
+    <!-- Reviewer Note -->
+    <div class="reviewer-note">
+      <strong>Reviewer Note:</strong>
+      <!-- AGENT: reviewer-note -->This report was generated by Legal Engineering. All analysis should be reviewed by qualified counsel before reliance.<!-- /AGENT -->
+    </div>
+
+    <!-- Executive Summary -->
+    <section class="report-section" id="executive-summary">
+      <div class="section-header" role="button" tabindex="0" aria-expanded="true" aria-controls="executive-summary-content">
+        <h2>Executive Summary</h2>
+        <span class="section-toggle" aria-hidden="true">&#x25BC;</span>
+      </div>
+      <div class="section-content" id="executive-summary-content">
+        <!-- AGENT: executive-summary -->
+        <p>Replace this placeholder with the executive summary of the analysis.</p>
+        <!-- /AGENT -->
+      </div>
+    </section>
+
+    <!-- Structure Diagram -->
+    <section class="report-section" id="structure-diagram">
+      <div class="section-header" role="button" tabindex="0" aria-expanded="true" aria-controls="structure-diagram-content">
+        <h2>Structure &amp; Flow Analysis</h2>
+        <span class="section-toggle" aria-hidden="true">&#x25BC;</span>
+      </div>
+      <div class="section-content" id="structure-diagram-content">
+        <div class="diagram-container">
+          <!-- AGENT: structure-diagram -->
+          <p>Replace this placeholder with SVG diagrams or structure visuals.</p>
+          <!-- /AGENT -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Jurisdiction Matrix -->
+    <section class="report-section" id="jurisdiction-matrix">
+      <div class="section-header" role="button" tabindex="0" aria-expanded="true" aria-controls="jurisdiction-matrix-content">
+        <h2>Jurisdiction Comparison Matrix</h2>
+        <span class="section-toggle" aria-hidden="true">&#x25BC;</span>
+      </div>
+      <div class="section-content" id="jurisdiction-matrix-content">
+        <!-- AGENT: jurisdiction-matrix -->
+        <table id="jurisdiction-table" aria-label="Jurisdiction Comparison">
+          <thead>
+            <tr>
+              <th data-sort="string">Jurisdiction</th>
+              <th data-sort="string">Tax Rate</th>
+              <th data-sort="string">Treaty Network</th>
+              <th data-sort="string">CRS Status</th>
+              <th data-sort="string">Risk Level</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>[Jurisdiction]</td>
+              <td>[Rate]</td>
+              <td>[Treaties]</td>
+              <td>[Status]</td>
+              <td><span class="risk-badge risk-low">Low</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <!-- /AGENT -->
+      </div>
+    </section>
+
+    <!-- Risk Heatmap -->
+    <section class="report-section" id="risk-heatmap">
+      <div class="section-header" role="button" tabindex="0" aria-expanded="true" aria-controls="risk-heatmap-content">
+        <h2>Risk Assessment Heat Map</h2>
+        <span class="section-toggle" aria-hidden="true">&#x25BC;</span>
+      </div>
+      <div class="section-content" id="risk-heatmap-content">
+        <!-- AGENT: risk-heatmap -->
+        <div class="heatmap-grid">
+          <div class="heatmap-cell risk-low">Placeholder</div>
+          <div class="heatmap-cell risk-medium">Placeholder</div>
+          <div class="heatmap-cell risk-high">Placeholder</div>
+          <div class="heatmap-cell risk-critical">Placeholder</div>
+        </div>
+        <!-- /AGENT -->
+      </div>
+    </section>
+
+    <!-- Recommendations -->
+    <section class="report-section" id="recommendations">
+      <div class="section-header" role="button" tabindex="0" aria-expanded="true" aria-controls="recommendations-content">
+        <h2>Recommendations &amp; Next Steps</h2>
+        <span class="section-toggle" aria-hidden="true">&#x25BC;</span>
+      </div>
+      <div class="section-content" id="recommendations-content">
+        <!-- AGENT: recommendations -->
+        <p>Replace this placeholder with actionable recommendations.</p>
+        <!-- /AGENT -->
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="report-footer">
+      <p>Generated by Legal Engineering &middot; <!-- AGENT: footer-date -->[Date]<!-- /AGENT --></p>
+      <p>This document is a work product and does not constitute legal advice.</p>
+    </footer>
+
+  </div>
+
+  <script>
+    /* === Expand / Collapse Sections === */
+    document.querySelectorAll('.section-header').forEach(function(header) {
+      header.addEventListener('click', function() {
+        var expanded = this.getAttribute('aria-expanded') === 'true';
+        this.setAttribute('aria-expanded', String(!expanded));
+        var contentId = this.getAttribute('aria-controls');
+        var content = document.getElementById(contentId);
+        if (content) {
+          content.classList.toggle('collapsed', expanded);
+        }
+      });
+      header.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          this.click();
+        }
+      });
+    });
+
+    /* === Sortable Tables === */
+    document.querySelectorAll('thead th[data-sort]').forEach(function(th) {
+      th.addEventListener('click', function() {
+        var table = this.closest('table');
+        var tbody = table.querySelector('tbody');
+        var rows = Array.from(tbody.querySelectorAll('tr'));
+        var colIndex = Array.from(this.parentNode.children).indexOf(this);
+        var sortType = this.getAttribute('data-sort');
+        var currentDir = this.getAttribute('data-sort-dir') || 'asc';
+        var newDir = currentDir === 'asc' ? 'desc' : 'asc';
+
+        // Reset all sort indicators
+        table.querySelectorAll('thead th').forEach(function(h) {
+          h.removeAttribute('data-sort-dir');
+          var ind = h.querySelector('.sort-indicator');
+          if (ind) ind.textContent = '';
+        });
+
+        this.setAttribute('data-sort-dir', newDir);
+        var indicator = this.querySelector('.sort-indicator');
+        if (!indicator) {
+          indicator = document.createElement('span');
+          indicator.className = 'sort-indicator';
+          this.appendChild(indicator);
+        }
+        indicator.textContent = newDir === 'asc' ? ' ▲' : ' ▼';
+
+        rows.sort(function(a, b) {
+          var aVal = a.children[colIndex] ? a.children[colIndex].textContent.trim() : '';
+          var bVal = b.children[colIndex] ? b.children[colIndex].textContent.trim() : '';
+          if (sortType === 'number') {
+            aVal = parseFloat(aVal.replace(/[^0-9.\-]/g, '')) || 0;
+            bVal = parseFloat(bVal.replace(/[^0-9.\-]/g, '')) || 0;
+            return newDir === 'asc' ? aVal - bVal : bVal - aVal;
+          }
+          return newDir === 'asc' ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+        });
+
+        rows.forEach(function(row) { tbody.appendChild(row); });
+      });
+    });
+  </script>
+</body>
+</html>

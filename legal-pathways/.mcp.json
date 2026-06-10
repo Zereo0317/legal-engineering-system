@@ -1,0 +1,42 @@
+{
+  "mcpServers": {
+    "Westlaw Classic": {
+      "command": "python",
+      "args": ["-m", "westlaw_mcp"],
+      "env": {
+        "COURTLISTENER_API_KEY": "${user_config.COURTLISTENER_API_KEY}",
+        "CONGRESS_API_KEY": "${user_config.CONGRESS_API_KEY}",
+        "OECD_API_KEY": "${user_config.OECD_API_KEY}",
+        "SEC_EDGAR_EMAIL": "${user_config.SEC_EDGAR_EMAIL}",
+        "SINGAPORE_ELIT_API_KEY": "${user_config.SINGAPORE_ELIT_API_KEY}"
+      },
+      "cwd": "${CLAUDE_PLUGIN_ROOT}/../westlaw-mcp",
+      "description": "Legal research — CourtListener (3,352 US courts), Congress.gov (legislation), Federal Register (regulations), eCFR (CFR full text), EUR-Lex (EU law), Taiwan Judicial Yuan, EU Compliance (GDPR/AI Act/DSA), OECD Tax Treaties, SEC EDGAR, Singapore eLitigation. Used for researching licensing regulations, immigration law, aviation regulations, and cross-border compliance."
+    },
+    "vaquill-legal": {
+      "type": "http",
+      "url": "https://mcp.vaquill.com/sse",
+      "description": "Vaquill AI — semantic search across 8M+ US federal/state court opinions, USC, and CFR"
+    },
+    "auslaw": {
+      "command": "npx",
+      "args": ["-y", "auslaw-mcp"],
+      "description": "AustLII — Australian case law and legislation with PDF OCR support"
+    },
+    "exa": {
+      "type": "sse",
+      "url": "https://mcp.exa.ai/sse",
+      "description": "Exa AI search — finds expert legal commentary, law firm publications, academic papers, regulatory news, and specialist articles across any language."
+    },
+    "fetch": {
+      "command": "uvx",
+      "args": ["mcp-server-fetch"],
+      "description": "Web content retrieval — reads any URL and converts to clean text. Use for government gazettes, regulatory announcements, and foreign-language legal sources."
+    },
+    "sequential-thinking": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"],
+      "description": "Structured multi-step reasoning for complex legal analysis chains and multi-jurisdiction comparisons."
+    }
+  }
+}

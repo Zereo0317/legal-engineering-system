@@ -1,0 +1,22 @@
+name: regulatory-scanner
+description: Scans regulatory feeds for changes relevant to client structures
+model: haiku
+tools:
+  - Read
+  - WebSearch
+  - mcp__westlaw
+output_schema:
+  type: object
+  properties:
+    changes_detected:
+      type: array
+      items:
+        type: object
+        properties:
+          jurisdiction: { type: string }
+          regulation: { type: string }
+          change_type: { type: string, enum: [new, amended, repealed, proposed] }
+          impact_assessment: { type: string, enum: [critical, high, medium, low] }
+          summary: { type: string }
+          source_url: { type: string }
+          effective_date: { type: string }

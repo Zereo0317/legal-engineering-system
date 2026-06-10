@@ -1,0 +1,741 @@
+{
+  "version": "1.2.0",
+  "name": "legal-engineering",
+  "total": 38,
+  "plugins": {
+    "cross-border-wealth": 29,
+    "legal-pathways": 9
+  },
+  "mcpServers": {
+    "westlaw-mcp": {
+      "displayName": "Westlaw Classic MCP",
+      "type": "local",
+      "source": "./westlaw-mcp",
+      "framework": "FastMCP (Python 3.10+)",
+      "tools": 25,
+      "description": "Unified legal research across 11 databases — Westlaw Classic (institutional), CourtListener (free), Congress.gov (free key), Federal Register (free), eCFR (free), EUR-Lex (free), Taiwan Judicial Yuan (free), EU Compliance (free), OECD Tax Treaties, SEC EDGAR (free), Singapore eLitigation. Vaquill AI provides an alternative semantic search path for US opinions, USC, and CFR."
+    },
+    "vaquill-legal": {
+      "displayName": "Vaquill AI Legal Search",
+      "type": "http",
+      "source": "https://mcp.vaquill.com/sse",
+      "tools": 2,
+      "description": "Semantic search across 8M+ US federal/state court opinions, USC, and CFR via Vaquill AI"
+    },
+    "auslaw": {
+      "displayName": "AustLII Australian Law",
+      "type": "local",
+      "source": "npx auslaw-mcp",
+      "tools": 3,
+      "description": "Australian case law and legislation via AustLII with PDF OCR support"
+    },
+    "slack": {
+      "displayName": "Slack",
+      "type": "http",
+      "source": "https://mcp.slack.com/mcp",
+      "tools": null,
+      "description": "Search messages, read channels, post updates"
+    },
+    "google-drive": {
+      "displayName": "Google Drive",
+      "type": "http",
+      "source": "https://drivemcp.googleapis.com/mcp/v1",
+      "tools": null,
+      "description": "Search, read, and fetch documents from Google Drive"
+    },
+    "exa": {
+      "displayName": "Exa AI Search",
+      "type": "sse",
+      "source": "https://mcp.exa.ai/sse",
+      "tools": null,
+      "description": "AI-native search — finds expert legal commentary, law firm publications, academic papers, regulatory news, and specialist articles across any language"
+    },
+    "fetch": {
+      "displayName": "Fetch (Official MCP)",
+      "type": "local",
+      "source": "uvx mcp-server-fetch",
+      "tools": null,
+      "description": "Web content retrieval — reads any URL and converts to clean text for analysis"
+    },
+    "sequential-thinking": {
+      "displayName": "Sequential Thinking (Official MCP)",
+      "type": "local",
+      "source": "npx -y @modelcontextprotocol/server-sequential-thinking",
+      "tools": null,
+      "description": "Structured multi-step reasoning chains for complex legal analysis"
+    }
+  },
+  "mcpTools": [
+    {
+      "name": "westlaw_classic_search",
+      "server": "westlaw-mcp",
+      "source": "Westlaw Classic",
+      "cost": "institutional subscription",
+      "description": "Full-text legal research across Westlaw Classic database"
+    },
+    {
+      "name": "westlaw_classic_get_document",
+      "server": "westlaw-mcp",
+      "source": "Westlaw Classic",
+      "cost": "institutional subscription",
+      "description": "Retrieve full document from Westlaw Classic by citation"
+    },
+    {
+      "name": "westlaw_search_cases",
+      "server": "westlaw-mcp",
+      "source": "CourtListener",
+      "cost": "free",
+      "description": "Search US case law across 3,352 courts via CourtListener API"
+    },
+    {
+      "name": "westlaw_get_case",
+      "server": "westlaw-mcp",
+      "source": "Westlaw Classic → CourtListener fallback",
+      "cost": "free fallback",
+      "description": "Retrieve a specific case — tries Westlaw first, falls back to CourtListener"
+    },
+    {
+      "name": "westlaw_search_legislation",
+      "server": "westlaw-mcp",
+      "source": "Congress.gov",
+      "cost": "free (API key required)",
+      "description": "Search US legislation and bills via Congress.gov API"
+    },
+    {
+      "name": "westlaw_search_regulations",
+      "server": "westlaw-mcp",
+      "source": "Federal Register",
+      "cost": "free",
+      "description": "Search US federal regulations, executive orders, proposed rules"
+    },
+    {
+      "name": "westlaw_get_cfr_section",
+      "server": "westlaw-mcp",
+      "source": "eCFR",
+      "cost": "free",
+      "description": "Retrieve full text of a specific CFR section (e.g., 14 CFR § 61.75)"
+    },
+    {
+      "name": "westlaw_search_eu_law",
+      "server": "westlaw-mcp",
+      "source": "EUR-Lex",
+      "cost": "free",
+      "description": "Search EU regulations, directives, and decisions via EUR-Lex"
+    },
+    {
+      "name": "westlaw_unified_search",
+      "server": "westlaw-mcp",
+      "source": "All sources in parallel",
+      "cost": "mixed",
+      "description": "Query cases + legislation + regulations + EU law + Taiwan + SEC + Singapore simultaneously"
+    },
+    {
+      "name": "westlaw_health_check",
+      "server": "westlaw-mcp",
+      "source": "Internal",
+      "cost": "free",
+      "description": "Check API status and circuit breaker state for all data sources"
+    },
+    {
+      "name": "westlaw_search_taiwan_judgments",
+      "server": "westlaw-mcp",
+      "source": "Taiwan Judicial Yuan",
+      "cost": "free",
+      "description": "Search Taiwan court judgments via Judicial Yuan database"
+    },
+    {
+      "name": "westlaw_get_taiwan_statute",
+      "server": "westlaw-mcp",
+      "source": "Taiwan Judicial Yuan",
+      "cost": "free",
+      "description": "Look up Taiwan statutes by name with optional article retrieval"
+    },
+    {
+      "name": "westlaw_search_taiwan_interpretations",
+      "server": "westlaw-mcp",
+      "source": "Taiwan Judicial Yuan",
+      "cost": "free",
+      "description": "Search Taiwan constitutional interpretations"
+    },
+    {
+      "name": "westlaw_eu_compliance_search",
+      "server": "westlaw-mcp",
+      "source": "EUR-Lex (Compliance)",
+      "cost": "free",
+      "description": "Search EU regulations with compliance focus — GDPR, AI Act, DSA, DMA, NIS2, DORA"
+    },
+    {
+      "name": "westlaw_eu_compliance_article",
+      "server": "westlaw-mcp",
+      "source": "EUR-Lex (Compliance)",
+      "cost": "free",
+      "description": "Get a specific article from an EU regulation by CELEX or short name"
+    },
+    {
+      "name": "westlaw_eu_compliance_compare",
+      "server": "westlaw-mcp",
+      "source": "EUR-Lex (Compliance)",
+      "cost": "free",
+      "description": "Compare two EU regulations — scope, obligations, penalties, timeline"
+    },
+    {
+      "name": "westlaw_oecd_get_treaty",
+      "server": "westlaw-mcp",
+      "source": "OECD Tax Treaties",
+      "cost": "free (API key optional)",
+      "description": "Get bilateral tax treaty between two countries with WHT rates"
+    },
+    {
+      "name": "westlaw_oecd_model_convention",
+      "server": "westlaw-mcp",
+      "source": "OECD Tax Treaties",
+      "cost": "free (API key optional)",
+      "description": "Search OECD Model Tax Convention articles"
+    },
+    {
+      "name": "westlaw_oecd_commentary",
+      "server": "westlaw-mcp",
+      "source": "OECD Tax Treaties",
+      "cost": "free (API key optional)",
+      "description": "Get OECD Model Tax Convention Commentary for an article"
+    },
+    {
+      "name": "westlaw_oecd_mli_status",
+      "server": "westlaw-mcp",
+      "source": "OECD Tax Treaties",
+      "cost": "free (API key optional)",
+      "description": "Check MLI (Multilateral Instrument) status for a country"
+    },
+    {
+      "name": "westlaw_search_sec_filings",
+      "server": "westlaw-mcp",
+      "source": "SEC EDGAR",
+      "cost": "free",
+      "description": "Search SEC EDGAR filings — 10-K, 10-Q, 8-K, S-1, proxy statements"
+    },
+    {
+      "name": "westlaw_get_sec_filing",
+      "server": "westlaw-mcp",
+      "source": "SEC EDGAR",
+      "cost": "free",
+      "description": "Get a specific SEC filing by accession number"
+    },
+    {
+      "name": "westlaw_sec_full_text_search",
+      "server": "westlaw-mcp",
+      "source": "SEC EDGAR",
+      "cost": "free",
+      "description": "Full-text search across SEC EDGAR filing content"
+    },
+    {
+      "name": "westlaw_search_singapore_cases",
+      "server": "westlaw-mcp",
+      "source": "Singapore eLitigation",
+      "cost": "free",
+      "description": "Search Singapore court judgments via eLitigation"
+    },
+    {
+      "name": "westlaw_get_singapore_judgment",
+      "server": "westlaw-mcp",
+      "source": "Singapore eLitigation",
+      "cost": "free",
+      "description": "Get full judgment text from Singapore eLitigation"
+    },
+    {
+      "name": "vaquill_semantic_search",
+      "server": "vaquill-legal",
+      "source": "Vaquill AI",
+      "cost": "API key required",
+      "description": "Semantic search across 8M+ US federal/state court opinions, USC, and CFR"
+    },
+    {
+      "name": "vaquill_get_opinion",
+      "server": "vaquill-legal",
+      "source": "Vaquill AI",
+      "cost": "API key required",
+      "description": "Retrieve full text of a US court opinion by citation or ID"
+    },
+    {
+      "name": "auslaw_search_cases",
+      "server": "auslaw",
+      "source": "AustLII",
+      "cost": "free",
+      "description": "Search Australian case law via AustLII"
+    },
+    {
+      "name": "auslaw_search_legislation",
+      "server": "auslaw",
+      "source": "AustLII",
+      "cost": "free",
+      "description": "Search Australian legislation via AustLII"
+    },
+    {
+      "name": "auslaw_get_document",
+      "server": "auslaw",
+      "source": "AustLII",
+      "cost": "free",
+      "description": "Retrieve full text of an Australian legal document with PDF OCR support"
+    }
+  ],
+  "agents": [
+    {
+      "name": "adversary",
+      "plugin": "cross-border-wealth",
+      "model": "sonnet",
+      "path": "cross-border-wealth/agents/adversary.md",
+      "description": "Constructs the strongest counter-arguments against a legal position. Identifies weaknesses, unfavorable precedent, and regulatory risks."
+    },
+    {
+      "name": "advocate",
+      "plugin": "cross-border-wealth",
+      "model": "sonnet",
+      "path": "cross-border-wealth/agents/advocate.md",
+      "description": "Builds the strongest possible case FOR a legal position. Marshals favorable authorities and constructs persuasive argument chains."
+    },
+    {
+      "name": "case-researcher",
+      "plugin": "cross-border-wealth",
+      "model": "opus",
+      "path": "cross-border-wealth/agents/case-researcher.md",
+      "description": "Multi-source deep case research with citation verification"
+    },
+    {
+      "name": "citation-checker",
+      "plugin": "cross-border-wealth",
+      "model": "haiku",
+      "path": "cross-border-wealth/agents/citation-checker.md",
+      "description": "Validates citations against MCP data sources, checks for overruling or negative treatment, and ensures correct formatting."
+    },
+    {
+      "name": "compliance",
+      "plugin": "cross-border-wealth",
+      "model": "sonnet",
+      "path": "cross-border-wealth/agents/compliance.md",
+      "description": "Regulatory compliance assessment across jurisdictions. Covers AML/KYC, sanctions, FATF, CRS/AEOI, substance requirements, and Pillar Two."
+    },
+    {
+      "name": "data-protection",
+      "plugin": "cross-border-wealth",
+      "model": "sonnet",
+      "path": "cross-border-wealth/agents/data-protection.md",
+      "description": "Privacy and data protection law analysis. Covers GDPR, Taiwan PDPA, CCPA/CPRA, China PIPL, and cross-border data transfer mechanisms."
+    },
+    {
+      "name": "drafter",
+      "plugin": "cross-border-wealth",
+      "model": "sonnet",
+      "path": "cross-border-wealth/agents/drafter.md",
+      "description": "Generates legal documents including memos, briefs, contracts, opinion letters, and regulatory filings with jurisdiction-specific formatting."
+    },
+    {
+      "name": "fiscal-specialist",
+      "plugin": "cross-border-wealth",
+      "model": "sonnet",
+      "path": "cross-border-wealth/agents/fiscal-specialist.md",
+      "description": "International tax analysis covering transfer pricing, treaty application, PE risk, CFC rules, Pillar Two, and exit taxation."
+    },
+    {
+      "name": "judicial-analyst",
+      "plugin": "cross-border-wealth",
+      "model": "opus",
+      "path": "cross-border-wealth/agents/judicial-analyst.md",
+      "description": "Neutral synthesis agent using judicial consideration methodology. Weighs advocate and adversary outputs to produce probability-weighted assessments."
+    },
+    {
+      "name": "orchestrator",
+      "plugin": "cross-border-wealth",
+      "model": "opus",
+      "path": "cross-border-wealth/agents/orchestrator.md",
+      "description": "Coordinates multi-agent workflows and manages pipeline execution. Routes queries to appropriate specialist agents."
+    },
+    {
+      "name": "regulatory-monitor",
+      "plugin": "cross-border-wealth",
+      "model": "sonnet",
+      "path": "cross-border-wealth/agents/regulatory-monitor.md",
+      "description": "Watch for regulatory changes across jurisdictions"
+    },
+    {
+      "name": "translator",
+      "plugin": "cross-border-wealth",
+      "model": "sonnet",
+      "path": "cross-border-wealth/agents/translator.md",
+      "description": "Legal translation specialist across EN, ZH-TW, ZH-CN, FR, and DE. Maintains legal terminology accuracy with terminology tables."
+    },
+    {
+      "name": "treaty-watcher",
+      "plugin": "cross-border-wealth",
+      "model": "sonnet",
+      "path": "cross-border-wealth/agents/treaty-watcher.md",
+      "description": "Monitor treaty changes affecting your structures"
+    },
+    {
+      "name": "compliance-analyst",
+      "plugin": "legal-pathways",
+      "model": "sonnet",
+      "path": "legal-pathways/agents/compliance-analyst.md",
+      "description": "Immigration and residency compliance analysis. Covers visa compliance, residency requirements, physical presence tracking, and CBI due diligence."
+    },
+    {
+      "name": "pathway-researcher",
+      "plugin": "legal-pathways",
+      "model": "opus",
+      "path": "legal-pathways/agents/pathway-researcher.md",
+      "description": "Deep research on licensing, immigration, and credential regulations"
+    }
+  ],
+  "skills": [
+    {
+      "name": "action-executor",
+      "plugin": "cross-border-wealth",
+      "path": "cross-border-wealth/skills/action-executor/SKILL.md",
+      "invoke": "/cross-border-wealth:action-executor",
+      "description": "Execute actions — send reports via Gmail, post to Slack, save to Google Drive. Always confirms before executing."
+    },
+    {
+      "name": "adversarial-analysis",
+      "plugin": "cross-border-wealth",
+      "path": "cross-border-wealth/skills/adversarial-analysis/SKILL.md",
+      "invoke": "/cross-border-wealth:adversarial-analysis",
+      "description": "Stress-test a legal position by evaluating arguments from both sides. Spawns advocate, adversary, and judicial-analyst agents for balanced risk assessment."
+    },
+    {
+      "name": "ai-governance-triage",
+      "plugin": "cross-border-wealth",
+      "path": "cross-border-wealth/skills/ai-governance-triage/SKILL.md",
+      "invoke": "/cross-border-wealth:ai-governance-triage",
+      "description": "Classify AI systems under the EU AI Act, identify prohibited practices, and assess high-risk AI system requirements."
+    },
+    {
+      "name": "deep-research",
+      "plugin": "cross-border-wealth",
+      "path": "cross-border-wealth/skills/deep-research/SKILL.md",
+      "invoke": "/cross-border-wealth:deep-research",
+      "description": "Deep multilingual legal research across any jurisdiction, culture, and language. Searches academic papers, expert commentary, law firm publications, government gazettes, court decisions. Reads sources in their original language (EN, ZH, JA, KO, FR, DE, ES, AR, PT, IT)."
+    },
+    {
+      "name": "case-atlas",
+      "plugin": "cross-border-wealth",
+      "path": "cross-border-wealth/skills/case-atlas/SKILL.md",
+      "invoke": "/cross-border-wealth:case-atlas",
+      "description": "Interactive Litigation Star Atlas — 15 landmark cases across 8 jurisdictions with briefings, analysis, and research prompts."
+    },
+    {
+      "name": "case-research",
+      "plugin": "cross-border-wealth",
+      "path": "cross-border-wealth/skills/case-research/SKILL.md",
+      "invoke": "/cross-border-wealth:case-research",
+      "description": "Deep legal research via Westlaw Classic + CourtListener + EUR-Lex. Produces sourced research memos with verified citations."
+    },
+    {
+      "name": "citation-verification",
+      "plugin": "cross-border-wealth",
+      "path": "cross-border-wealth/skills/citation-verification/SKILL.md",
+      "invoke": "/cross-border-wealth:citation-verification",
+      "description": "Verify legal citations, check if cases are still good law, validate references against data sources, and tag provenance."
+    },
+    {
+      "name": "cold-start-interview",
+      "plugin": "cross-border-wealth",
+      "path": "cross-border-wealth/skills/cold-start-interview/SKILL.md",
+      "invoke": "/cross-border-wealth:cold-start-interview",
+      "description": "Onboard a new user or practice. Interviews you about your practice type, jurisdiction footprint, structure inventory, risk posture, compliance obligations, cultural context, and output preferences."
+    },
+    {
+      "name": "compliance-checker",
+      "plugin": "cross-border-wealth",
+      "path": "cross-border-wealth/skills/compliance-checker/SKILL.md",
+      "invoke": "/cross-border-wealth:compliance-checker",
+      "description": "Check against DAC6, CRS, FATCA, BEPS CbCR, UBO registers, and local reporting obligations."
+    },
+    {
+      "name": "contract-review",
+      "plugin": "cross-border-wealth",
+      "path": "cross-border-wealth/skills/contract-review/SKILL.md",
+      "invoke": "/cross-border-wealth:contract-review",
+      "description": "Review contracts against market standards with dual severity scoring for legal risk and business friction. Covers NDAs, vendor agreements, SaaS MSAs, and engagement letters."
+    },
+    {
+      "name": "customize",
+      "plugin": "cross-border-wealth",
+      "path": "cross-border-wealth/skills/customize/SKILL.md",
+      "invoke": "/cross-border-wealth:customize",
+      "description": "Edit the practice profile directly. Change jurisdiction footprint, risk posture, structure inventory, compliance obligations, house style, or any other section."
+    },
+    {
+      "name": "entity-optimizer",
+      "plugin": "cross-border-wealth",
+      "path": "cross-border-wealth/skills/entity-optimizer/SKILL.md",
+      "invoke": "/cross-border-wealth:entity-optimizer",
+      "description": "Recommend the optimal entity type and jurisdiction for a goal — LLCs, trusts, foundations, VCCs, SPCs, partnerships, corporates."
+    },
+    {
+      "name": "exit-analysis",
+      "plugin": "cross-border-wealth",
+      "path": "cross-border-wealth/skills/exit-analysis/SKILL.md",
+      "invoke": "/cross-border-wealth:exit-analysis",
+      "description": "Analyze consequences of unwinding, restructuring, or migrating — exit taxes, deemed disposals, clawbacks, liquidation sequences."
+    },
+    {
+      "name": "jurisdiction-scanner",
+      "plugin": "cross-border-wealth",
+      "path": "cross-border-wealth/skills/jurisdiction-scanner/SKILL.md",
+      "invoke": "/cross-border-wealth:jurisdiction-scanner",
+      "description": "Compare jurisdictions for a specific structuring purpose — holding company, IP vehicle, trust, treasury, operating entity."
+    },
+    {
+      "name": "matter-workspace",
+      "plugin": "cross-border-wealth",
+      "path": "cross-border-wealth/skills/matter-workspace/SKILL.md",
+      "invoke": "/cross-border-wealth:matter-workspace",
+      "description": "Per-client workspace isolation for multi-client practices."
+    },
+    {
+      "name": "pillar-two-impact",
+      "plugin": "cross-border-wealth",
+      "path": "cross-border-wealth/skills/pillar-two-impact/SKILL.md",
+      "invoke": "/cross-border-wealth:pillar-two-impact",
+      "description": "Assess OECD Pillar Two (Global Minimum Tax) impact. Calculate jurisdictional ETRs, model IIR/UTPR/QDMTT top-up."
+    },
+    {
+      "name": "privacy-impact-assessment",
+      "plugin": "cross-border-wealth",
+      "path": "cross-border-wealth/skills/privacy-impact-assessment/SKILL.md",
+      "invoke": "/cross-border-wealth:privacy-impact-assessment",
+      "description": "Conduct a Privacy Impact Assessment (PIA) or DPIA for cross-border data flows. Covers GDPR Art. 35, Taiwan PDPA, and transfer impact assessments."
+    },
+    {
+      "name": "regulatory-gap-analysis",
+      "plugin": "cross-border-wealth",
+      "path": "cross-border-wealth/skills/regulatory-gap-analysis/SKILL.md",
+      "invoke": "/cross-border-wealth:regulatory-gap-analysis",
+      "description": "Identify regulatory gaps and compliance shortfalls across jurisdictions. Compares against FATF, CRS, AEOI, Pillar Two, and substance rules."
+    },
+    {
+      "name": "report-generator",
+      "plugin": "cross-border-wealth",
+      "path": "cross-border-wealth/skills/report-generator/SKILL.md",
+      "invoke": "/cross-border-wealth:report-generator",
+      "description": "Generate standalone HTML reports — interactive structure diagrams, jurisdiction matrices, risk heat maps, compliance dashboards."
+    },
+    {
+      "name": "risk-assessment",
+      "plugin": "cross-border-wealth",
+      "path": "cross-border-wealth/skills/risk-assessment/SKILL.md",
+      "invoke": "/cross-border-wealth:risk-assessment",
+      "description": "Identify structure vulnerabilities — substance challenges, treaty shopping exposure, GAAR risk, upcoming regulatory changes."
+    },
+    {
+      "name": "salecraft-compliance",
+      "plugin": "cross-border-wealth",
+      "path": "cross-border-wealth/skills/salecraft-compliance/SKILL.md",
+      "invoke": "/cross-border-wealth:salecraft-compliance",
+      "description": "Review SaleCraft-generated content for legal compliance across advertising law, marketing claims, and consumer protection. Covers Taiwan Fair Trade Act, FTC guidelines, and health/cosmetics/food claims."
+    },
+    {
+      "name": "structure-analysis",
+      "plugin": "cross-border-wealth",
+      "path": "cross-border-wealth/skills/structure-analysis/SKILL.md",
+      "invoke": "/cross-border-wealth:structure-analysis",
+      "description": "Analyze a cross-border wealth structure — entities, flows, treaties, substance, TP, compliance. The core skill of the legal engineering optimizer."
+    },
+    {
+      "name": "structure-designer",
+      "plugin": "cross-border-wealth",
+      "path": "cross-border-wealth/skills/structure-designer/SKILL.md",
+      "invoke": "/cross-border-wealth:structure-designer",
+      "description": "Design a cross-border structure from scratch. Selects jurisdictions, entity types, flow routing, and treaty paths."
+    },
+    {
+      "name": "taiwan-law-specialist",
+      "plugin": "cross-border-wealth",
+      "path": "cross-border-wealth/skills/taiwan-law-specialist/SKILL.md",
+      "invoke": "/cross-border-wealth:taiwan-law-specialist",
+      "description": "Taiwan-specific legal analysis covering PDPA, Consumer Protection Act, Fair Trade Act, Company Act, and Securities and Exchange Act. Bilingual analysis with proper Taiwan citation format."
+    },
+    {
+      "name": "legal-dashboard",
+      "plugin": "cross-border-wealth",
+      "path": "cross-border-wealth/skills/legal-dashboard/SKILL.md",
+      "invoke": "/cross-border-wealth:legal-dashboard",
+      "description": "Generate self-contained HTML dashboards with live filtering, sorting, and risk visualization for compliance, matter status, or jurisdiction comparison."
+    },
+    {
+      "name": "transfer-pricing-review",
+      "plugin": "cross-border-wealth",
+      "path": "cross-border-wealth/skills/transfer-pricing-review/SKILL.md",
+      "invoke": "/cross-border-wealth:transfer-pricing-review",
+      "description": "Review intercompany transactions against arm’s-length standard. FAR analysis, methodology selection, BEPS risk flags."
+    },
+    {
+      "name": "tp-documentation-generation",
+      "plugin": "cross-border-wealth",
+      "path": "cross-border-wealth/skills/tp-documentation-generation/SKILL.md",
+      "invoke": "/cross-border-wealth:tp-documentation-generation",
+      "description": "Generate OECD BEPS Action 13 documentation from a transfer-pricing-review — Master File, Local File, and CbCR outlines with the selected arm’s-length method, FAR analysis, and documentation-gap flags. Rendering hands off to Content-Gen."
+    },
+    {
+      "name": "treaty-mapper",
+      "plugin": "cross-border-wealth",
+      "path": "cross-border-wealth/skills/treaty-mapper/SKILL.md",
+      "invoke": "/cross-border-wealth:treaty-mapper",
+      "description": "Map the bilateral tax treaty network between jurisdictions. Find optimal routing paths to minimize withholding tax."
+    },
+    {
+      "name": "trust-governance",
+      "plugin": "cross-border-wealth",
+      "path": "cross-border-wealth/skills/trust-governance/SKILL.md",
+      "invoke": "/cross-border-wealth:trust-governance",
+      "description": "Analyze trust structures — fiduciary duties, protector powers, beneficiary rights, VCC sub-fund governance."
+    },
+    {
+      "name": "aviation-licensing",
+      "plugin": "legal-pathways",
+      "path": "legal-pathways/skills/aviation-licensing/SKILL.md",
+      "invoke": "/legal-pathways:aviation-licensing",
+      "description": "Compare aviation authorities and design fastest path to pilot certification — PPL, IR, ME, type ratings, aircraft registry, ownership structures."
+    },
+    {
+      "name": "cold-start-interview",
+      "plugin": "legal-pathways",
+      "path": "legal-pathways/skills/cold-start-interview/SKILL.md",
+      "invoke": "/legal-pathways:cold-start-interview",
+      "description": "Onboarding interview for Legal Pathways. Captures background, qualifications, target credentials, budget, timeline, risk tolerance."
+    },
+    {
+      "name": "credential-engineering",
+      "plugin": "legal-pathways",
+      "path": "legal-pathways/skills/credential-engineering/SKILL.md",
+      "invoke": "/legal-pathways:credential-engineering",
+      "description": "Analyze credential gaps and design pathway to professional licenses across borders — education, exams, supervised hours, visa strategy."
+    },
+    {
+      "name": "gap-analysis",
+      "plugin": "legal-pathways",
+      "path": "legal-pathways/skills/gap-analysis/SKILL.md",
+      "invoke": "/legal-pathways:gap-analysis",
+      "description": "General gap identification across any regulatory domain. Produces prioritized gap matrix with cost, timeline, and CTAs."
+    },
+    {
+      "name": "immigration-pathway",
+      "plugin": "legal-pathways",
+      "path": "legal-pathways/skills/immigration-pathway/SKILL.md",
+      "invoke": "/legal-pathways:immigration-pathway",
+      "description": "Analyze immigration options and design optimal pathway to citizenship, PR, or work authorization — CBI, skilled worker, points systems, leverage."
+    },
+    {
+      "name": "legal-translation",
+      "plugin": "legal-pathways",
+      "path": "legal-pathways/skills/legal-translation/SKILL.md",
+      "invoke": "/legal-pathways:legal-translation",
+      "description": "Translate legal documents with precision across EN, ZH-TW, ZH-CN, FR, and DE. Produces terminology tables and flags untranslatable legal concepts."
+    },
+    {
+      "name": "matter-workspace",
+      "plugin": "legal-pathways",
+      "path": "legal-pathways/skills/matter-workspace/SKILL.md",
+      "invoke": "/legal-pathways:matter-workspace",
+      "description": "Create and manage structured matter workspaces for legal projects. Tracks deadlines, parties, documents, and correspondence with cross-session memory."
+    },
+    {
+      "name": "pathway-comparison",
+      "plugin": "legal-pathways",
+      "path": "legal-pathways/skills/pathway-comparison/SKILL.md",
+      "invoke": "/legal-pathways:pathway-comparison",
+      "description": "Compare multiple pathway options across jurisdictions with cost-benefit analysis and scored comparison matrices."
+    },
+    {
+      "name": "sovereign-architect",
+      "plugin": "legal-pathways",
+      "path": "legal-pathways/skills/sovereign-architect/SKILL.md",
+      "invoke": "/legal-pathways:sovereign-architect",
+      "description": "Design complete sovereign individual architecture using flag theory — citizenship, tax residence, business, assets, lifestyle, digital, aviation."
+    }
+  ],
+  "references": [
+    {
+      "name": "dashboard-template",
+      "plugin": "cross-border-wealth",
+      "path": "cross-border-wealth/references/dashboard-template.md",
+      "description": "Dashboard format specification"
+    },
+    {
+      "name": "guardrails",
+      "plugin": "cross-border-wealth",
+      "path": "cross-border-wealth/references/guardrails.md",
+      "description": "Ethical guardrails and mandatory law boundaries for legal engineering"
+    },
+    {
+      "name": "jurisdiction-profiles",
+      "plugin": "cross-border-wealth",
+      "path": "cross-border-wealth/references/jurisdiction-profiles.md",
+      "description": "Tax rates, treaty networks, substance rules for key jurisdictions"
+    },
+    {
+      "name": "litigation-star-atlas",
+      "plugin": "cross-border-wealth",
+      "path": "cross-border-wealth/references/litigation-star-atlas.md",
+      "description": "15 landmark cases, 8 jurisdictions, verified sources"
+    },
+    {
+      "name": "matter-template",
+      "plugin": "cross-border-wealth",
+      "path": "cross-border-wealth/references/matter-template.md",
+      "description": "Matter workspace template for client project setup"
+    },
+    {
+      "name": "pillar-two-tracker",
+      "plugin": "cross-border-wealth",
+      "path": "cross-border-wealth/references/pillar-two-tracker.md",
+      "description": "Global Minimum Tax implementation status by jurisdiction"
+    },
+    {
+      "name": "report-template",
+      "plugin": "cross-border-wealth",
+      "path": "cross-border-wealth/references/report-template.html",
+      "description": "HTML report template (dark/light, print, sortable)"
+    },
+    {
+      "name": "substance-requirements",
+      "plugin": "cross-border-wealth",
+      "path": "cross-border-wealth/references/substance-requirements.md",
+      "description": "Per-jurisdiction substance rules and costs"
+    },
+    {
+      "name": "treaty-network",
+      "plugin": "cross-border-wealth",
+      "path": "cross-border-wealth/references/treaty-network.md",
+      "description": "Bilateral WHT rate matrix across 13 structuring jurisdictions"
+    },
+    {
+      "name": "aviation-licensing-global",
+      "plugin": "legal-pathways",
+      "path": "legal-pathways/references/aviation-licensing-global.md",
+      "description": "PPL by country, type ratings by aircraft, aircraft registries, ownership structures, license conversion"
+    },
+    {
+      "name": "citizenship-investment-matrix",
+      "plugin": "legal-pathways",
+      "path": "legal-pathways/references/citizenship-investment-matrix.md",
+      "description": "CBI/RBI programs worldwide — costs, timelines, passport quality, strategic framework"
+    },
+    {
+      "name": "flag-theory-implementation",
+      "plugin": "legal-pathways",
+      "path": "legal-pathways/references/flag-theory-implementation.md",
+      "description": "7 flags framework, UHNW family office architecture, private jet integration, compliance"
+    },
+    {
+      "name": "singapore-immigration",
+      "plugin": "legal-pathways",
+      "path": "legal-pathways/references/singapore-immigration.md",
+      "description": "Singapore PR/citizenship pathways, dual citizenship reality, GIP, COMPASS, family office 13O/13U"
+    },
+    {
+      "name": "us-counselor-licensing",
+      "plugin": "legal-pathways",
+      "path": "legal-pathways/references/us-counselor-licensing.md",
+      "description": "State-by-state LPC/LMHC requirements, CACREP, foreign credential evaluation, Counseling Compact"
+    }
+  ]
+}
