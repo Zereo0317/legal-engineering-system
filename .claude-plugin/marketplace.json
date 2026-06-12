@@ -3,35 +3,16 @@
   "name": "legal-engineering",
   "version": "0.4.0",
   "description": "Legal engineering optimizer — treats 200+ jurisdictions as modular building blocks for wealth structuring, immigration pathways, credential engineering, aviation licensing, and sovereign individual architecture. Exploits legal arbitrage across jurisdictions to create advantages. Combines Westlaw Classic, CourtListener, EUR-Lex, and multi-jurisdiction databases. Built for elites, UHNW individuals, family offices, and empire-building founders.",
-  "categories": [
-    "legal",
-    "tax",
-    "compliance",
-    "research",
-    "wealth-management",
-    "immigration",
-    "licensing",
-    "credentials",
-    "aviation",
-    "sovereign-individual"
-  ],
   "owner": {
     "name": "Zereo",
-    "url": "https://github.com/Zereo0317/legal-engineering-system"
-  },
-  "stats": {
-    "totalSkills": 38,
-    "totalAgents": 15,
-    "totalReferences": 14
+    "email": "zereo@connact.ai"
   },
   "plugins": [
     {
       "name": "cross-border-wealth",
       "displayName": "Cross-Border Wealth & Tax",
       "source": "./cross-border-wealth",
-      "skills": 29,
-      "agents": 13,
-      "references": 9,
+      "category": "legal",
       "description": "Legal engineering optimizer for cross-border wealth structuring, tax litigation research, and multi-jurisdiction entity architecture. Analyzes structures like LEGO — modular, repeatable, optimizable. Integrates Westlaw Classic MCP, produces HTML reports, and executes actions across Gmail, web search, and connected tools. Grounded to truth with self-verification at every step.",
       "author": {
         "name": "Zereo"
@@ -41,9 +22,7 @@
       "name": "legal-pathways",
       "displayName": "Legal Pathways Engineering",
       "source": "./legal-pathways",
-      "skills": 9,
-      "agents": 2,
-      "references": 5,
+      "category": "legal",
       "description": "Cross-border credential, licensing, and immigration pathway optimizer. Treats professional licensing boards, aviation authorities, and immigration systems as modular building blocks — finds the fastest, cheapest, and most legally robust pathway to your target credential or status. Built for ambitious professionals navigating international regulatory systems.",
       "author": {
         "name": "Zereo"
