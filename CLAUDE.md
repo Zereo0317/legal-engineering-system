@@ -28,7 +28,7 @@ plugins (`cross-border-wealth`, `legal-pathways`) and a `westlaw-mcp` server. Se
 - **`.gitignore`** excludes secrets, Python caches (`__pycache__/`, `.venv/`), and build artifacts.
 
 ## Relevant skills
-When working here, reach for these skills in ../../Skill/Zereo-skills (search registry.json):
+When working here, reach for these skills in ../../../Skill/Zereo-skills (search registry.json):
 - legal-engineering — the maintained, integrated legal skill category (start here).
 - 06-knowledge-management — for the references / matter-management material.
 Search `Skill/Zereo-skills/registry.json` by keyword (legal, compliance, jurisdiction) for more.
