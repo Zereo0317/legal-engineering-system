@@ -1,4 +1,4 @@
-# Legal-Engineering-Public — CLAUDE.md
+# Legal-Engineering-System — CLAUDE.md
 
 > **Standalone / third-party upstream — light treatment.** This is the **public upstream** of the
 > legal-engineering plugin. Its reviewed content has already been **integrated into
